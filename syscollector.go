@@ -3,7 +3,7 @@ package wazuh
 import (
 	"context"
 
-	. "github.com/mrtc0/wazuh/syscollector"
+	. "github.com/mrtc0/wazuh/struct"
 )
 
 func GetHardwareInfoRequest(ctx context.Context, client httpClient, path string) (*GetHardwareInfoResponse, error) {

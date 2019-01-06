@@ -19,7 +19,7 @@ https://documentation.wazuh.com/current/user-manual/api/reference.html
 - [ ] Experimental
 - [ ] Manager
 - [ ] Rootcheck
-- [ ] Rules
+- [x] Rules
 - [ ] Syscheck
 - [x] Syscollector
 

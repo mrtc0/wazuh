@@ -1,4 +1,4 @@
-package syscollector
+package define
 
 type HardwareInfo struct {
 	BoardSerial string `json:"board_serial"`

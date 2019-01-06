@@ -4,12 +4,14 @@ import (
 	"context"
 )
 
+type AgentInformationData struct {
+	TotalItems int                `json:"totalItems"`
+	Items      []AgentInformation `json:"items"`
+}
+
 type GetAllAgentsResponse struct {
-	Error int `json:"error"`
-	Data  struct {
-		TotalItems int                `json:"totalItems"`
-		Items      []AgentInformation `json:"items"`
-	} `json:"data"`
+	Error int                  `json:"error"`
+	Data  AgentInformationData `json:"data"`
 }
 
 type GetAnAgentResponse struct {
@@ -17,29 +19,31 @@ type GetAnAgentResponse struct {
 	Data  AgentInformation `json::"data"`
 }
 
+type Os struct {
+	Major    string `json:"major"`
+	Name     string `json:"name"`
+	Uname    string `json:"uname"`
+	Platform string `json:"platform"`
+	Version  string `json:"version"`
+	Codename string `json:"codename"`
+	Arch     string `json:"arch"`
+	Minor    string `json:"minor"`
+}
+
 type AgentInformation struct {
-	Status        string `json:"status"`
-	Name          string `json:"name"`
-	IP            string `json:"ip"`
-	Manager       string `json:"manager"`
-	NodeName      string `json:"node_name"`
-	DateAdd       string `json:"dateAdd"`
-	Version       string `json:"version"`
-	LastKeepAlive string `json:"lastKeepAlive"`
-	Os            struct {
-		Major    string `json:"major"`
-		Name     string `json:"name"`
-		Uname    string `json:"uname"`
-		Platform string `json:"platform"`
-		Version  string `json:"version"`
-		Codename string `json:"codename"`
-		Arch     string `json:"arch"`
-		Minor    string `json:"minor"`
-	} `json:"os"`
-	ID        string   `json:"id"`
-	ConfigSum string   `json:"configSum,omitempty"`
-	Group     []string `json:"group,omitempty"`
-	MergedSum string   `json:"mergedSum,omitempty"`
+	Status        string   `json:"status"`
+	Name          string   `json:"name"`
+	IP            string   `json:"ip"`
+	Manager       string   `json:"manager"`
+	NodeName      string   `json:"node_name"`
+	DateAdd       string   `json:"dateAdd"`
+	Version       string   `json:"version"`
+	LastKeepAlive string   `json:"lastKeepAlive"`
+	Os            Os       `json:"os"`
+	ID            string   `json:"id"`
+	ConfigSum     string   `json:"configSum,omitempty"`
+	Group         []string `json:"group,omitempty"`
+	MergedSum     string   `json:"mergedSum,omitempty"`
 }
 
 func GetAllAgentsRequest(ctx context.Context, client httpClient, path string) (*GetAllAgentsResponse, error) {

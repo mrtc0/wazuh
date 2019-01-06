@@ -1,4 +1,6 @@
-# Wazuh API in Go
+# Wazuh API in Go 
+
+[![Build Status](https://travis-ci.org/mrtc0/wazuh.svg?branch=master)](https://travis-ci.org/mrtc0/wazuh)
 
 ---
 

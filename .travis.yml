@@ -1,0 +1,17 @@
+language: go
+
+go:
+    - 1.7.x
+    - 1.8.x
+    - 1.9.x
+    - 1.10.x
+    - 1.11.x
+
+before_install:
+  - export PATH=$HOME/gopath/bin:$PATH
+
+script:
+  - go test -race $(go list | grep -v example)
+
+git:
+  depth: 10

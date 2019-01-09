@@ -17,9 +17,9 @@ https://documentation.wazuh.com/current/user-manual/api/reference.html
 - [ ] Cache
 - [ ] Ciscat
 - [ ] Cluster
-- [ ] Decoders
+- [x] Decoders
 - [ ] Experimental
-- [ ] Manager
+- [x] Manager
 - [ ] Rootcheck
 - [x] Rules
 - [ ] Syscheck

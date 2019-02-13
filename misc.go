@@ -40,5 +40,6 @@ func GetJson(ctx context.Context, client httpClient, endpoint string, intf inter
 		q.Add("api_key", "key_from_environment_or_flag")
 		req.URL.RawQuery = q.Encode()
 	*/
+
 	return DoGet(ctx, client, req, intf)
 }

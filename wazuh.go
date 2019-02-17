@@ -8,6 +8,8 @@ import (
 var APIURL string
 var USERNAME string
 var PASSWORD string
+var CLIENT_CERT_PATH string
+var CLIENT_KEY_PATH string
 
 type httpClient interface {
 	Do(*http.Request) (*http.Response, error)
@@ -17,11 +19,26 @@ type Client struct {
 	httpclient httpClient
 }
 
-func New(url string) *Client {
+type ClientOption func(*ClientOptions)
+
+type ClientOptions struct {
+	certificatePath string
+	keyPath         string
+}
+
+func New(url string, options ...ClientOption) *Client {
 	APIURL = url
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+
+	opt := ClientOptions{}
+	for _, o := range options {
+		o(&opt)
 	}
+
+	cert, _ := tls.LoadX509KeyPair(opt.certificatePath, opt.keyPath)
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true, Certificates: []tls.Certificate{cert}},
+	}
+
 	s := &Client{
 		httpclient: &http.Client{Transport: tr},
 	}
@@ -32,4 +49,15 @@ func New(url string) *Client {
 func (api *Client) SetBasicAuth(username, password string) {
 	USERNAME = username
 	PASSWORD = password
+}
+
+// If you are doing client certificate authentication, use it
+func SetClientCertificate(cert string, key string) ClientOption {
+	CLIENT_CERT_PATH = cert
+	CLIENT_KEY_PATH = key
+
+	return func(options *ClientOptions) {
+		options.certificatePath = cert
+		options.keyPath = key
+	}
 }

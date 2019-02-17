@@ -32,13 +32,16 @@ func GetJson(ctx context.Context, client httpClient, endpoint string, intf inter
 	if err != nil {
 		return err
 	}
-	req.SetBasicAuth(USERNAME, PASSWORD)
-	req.Header.Set("Content-Type", "application/json")
+
+	if USERNAME != "" || PASSWORD != "" {
+		req.SetBasicAuth(USERNAME, PASSWORD)
+	}
 
 	/*
 		q := req.URL.Query()
 		q.Add("api_key", "key_from_environment_or_flag")
 		req.URL.RawQuery = q.Encode()
 	*/
+
 	return DoGet(ctx, client, req, intf)
 }

@@ -1,10 +1,12 @@
-package wazuh
+package wazuh_test
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"testing"
+
+	. "github.com/mrtc0/wazuh"
 )
 
 func TestGetAllAgents(t *testing.T) {

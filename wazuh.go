@@ -23,7 +23,7 @@ type ClientOption func(*ClientOptions)
 
 type ClientOptions struct {
 	certificatePath string
-	keyPath string
+	keyPath         string
 }
 
 func New(url string, options ...ClientOption) *Client {
@@ -51,6 +51,7 @@ func (api *Client) SetBasicAuth(username, password string) {
 	PASSWORD = password
 }
 
+// If you are doing client certificate authentication, use it
 func SetClientCertificate(cert string, key string) ClientOption {
 	CLIENT_CERT_PATH = cert
 	CLIENT_KEY_PATH = key

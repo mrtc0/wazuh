@@ -6,19 +6,19 @@ import (
 	"net/http"
 	"testing"
 
-	. "github.com/mrtc0/wazuh"
+	"github.com/mrtc0/wazuh"
 )
 
 func TestGetAllAgents(t *testing.T) {
-	data := []AgentInformation{
-		AgentInformation{
+	data := []wazuh.AgentInformation{
+		wazuh.AgentInformation{
 			Status:        "Active",
 			Name:          "wazuh-manager",
 			NodeName:      "node01",
 			DateAdd:       "2019-01-05 08:35:27",
 			Version:       "Wazuh v3.7.2",
 			LastKeepAlive: "9999-12-31 23:59:59",
-			Os: Os{
+			Os: wazuh.Os{
 				Major:    "16",
 				Name:     "Ubuntu",
 				Uname:    "Linux |redis |4.15.0-36-generic |#39~16.04.1-Ubuntu SMP Tue Sep 25 08:59:23 UTC 2018 |x86_64",
@@ -37,9 +37,9 @@ func TestGetAllAgents(t *testing.T) {
 		},
 	}
 
-	response := GetAllAgentsResponse{
+	response := wazuh.GetAllAgentsResponse{
 		Error: 0,
-		Data: AgentInformationData{
+		Data: wazuh.AgentInformationData{
 			TotalItems: 1,
 			Items:      data,
 		},
@@ -52,11 +52,10 @@ func TestGetAllAgents(t *testing.T) {
 	}
 
 	once.Do(startServer)
-	endpoint := "http://" + serverAddr + "/"
 
 	http.HandleFunc("/agents", func(w http.ResponseWriter, r *http.Request) { fmt.Fprint(w, string(b)) })
 
-	client := New(endpoint)
+	client := wazuh.New(endpoint)
 	client.SetBasicAuth("user", "pass")
 	agents, err := client.GetAllAgents()
 
@@ -69,5 +68,27 @@ func TestGetAllAgents(t *testing.T) {
 
 	if agent.Status != expected {
 		t.Errorf("expected %s, but got %s\n", expected, agent.Status)
+	}
+}
+
+func TestGetGroups(t *testing.T) {
+	once.Do(startServer)
+	http.HandleFunc("/agents/groups", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, `{"error":0,"data":{"totalItems":1,"items":[{"count":4,"mergedSum":"345bce156ecdbf8cfaee550d003341a9","configSum":"ab73af41699f13fdd81903b5f23d8d00","name":"default"}]}}`)
+	})
+
+	wazuh := wazuh.New(endpoint)
+
+	groups, err := wazuh.GetGroups()
+
+	if err != nil {
+		t.Fatalf("want no err, but has error %#v", err.Error())
+	}
+
+	expected := "default"
+	group := (*groups)[0]
+
+	if group.Name != expected {
+		t.Errorf("expected %s, but got %s\n", expected, group.Name)
 	}
 }

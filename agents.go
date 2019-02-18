@@ -19,6 +19,23 @@ type GetAnAgentResponse struct {
 	Data  AgentInformation `json::"data"`
 }
 
+type GetGroupsResponse struct {
+	Error int       `json:"error"`
+	Data  GroupData `json:"data"`
+}
+
+type GroupData struct {
+	TotalItems int     `json:"totalItems"`
+	Items      []Group `json:"items"`
+}
+
+type Group struct {
+	Count     int    `json:"count"`
+	MergedSum string `json:"mergedSum"`
+	ConfigSum string `json:"configSum"`
+	Name      string `json:"name"`
+}
+
 type Os struct {
 	Major    string `json:"major"`
 	Name     string `json:"name"`
@@ -88,4 +105,26 @@ func (api *Client) GetAnAgentContext(ctx context.Context, agentID string) (*Agen
 		return nil, err
 	}
 	return &response.Data, nil
+}
+
+// https://documentation.wazuh.com/current/user-manual/api/reference.html#get-groups
+func (api *Client) GetGroups() (*[]Group, error) {
+	return api.GetGroupsContext(context.Background())
+}
+
+func (api *Client) GetGroupsContext(ctx context.Context) (*[]Group, error) {
+	response, err := GetGroupsRequest(ctx, api.httpclient, "agents/groups")
+	if err != nil {
+		return nil, err
+	}
+	return &response.Data.Items, nil
+}
+
+func GetGroupsRequest(ctx context.Context, client httpClient, path string) (*GetGroupsResponse, error) {
+	response := &GetGroupsResponse{}
+	err := GetJson(ctx, client, APIURL+path, response)
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
 }

@@ -10,12 +10,14 @@ import (
 
 var (
 	serverAddr string
+	endpoint   string
 	once       sync.Once
 )
 
 func startServer() {
 	server := httptest.NewServer(nil)
 	serverAddr = server.Listener.Addr().String()
+	endpoint = "http://" + serverAddr + "/"
 	log.Print("Test server listening on ", serverAddr)
 }
 

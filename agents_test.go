@@ -52,11 +52,11 @@ func TestGetAllAgents(t *testing.T) {
 	}
 
 	once.Do(startServer)
-	APIURL := "http://" + serverAddr + "/"
+	endpoint := "http://" + serverAddr + "/"
 
 	http.HandleFunc("/agents", func(w http.ResponseWriter, r *http.Request) { fmt.Fprint(w, string(b)) })
 
-	client := New(APIURL)
+	client := New(endpoint)
 	client.SetBasicAuth("user", "pass")
 	agents, err := client.GetAllAgents()
 

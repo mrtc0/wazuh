@@ -3,6 +3,7 @@ package wazuh
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -24,6 +25,9 @@ func DoGet(ctx context.Context, client httpClient, req *http.Request, intf inter
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode < 200 || 300 < resp.StatusCode {
+		return fmt.Errorf("http request error code:%d msg: %s", resp.StatusCode, http.StatusText(resp.StatusCode))
+	}
 	return ParseResponseBody(resp.Body, intf)
 }
 

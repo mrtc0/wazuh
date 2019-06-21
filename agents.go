@@ -128,3 +128,24 @@ func GetGroupsRequest(ctx context.Context, client httpClient, path string) (*Get
 	}
 	return response, nil
 }
+
+func (api *Client) GetAgentsByGroup(groupId string) (*[]AgentInformation, error) {
+	return api.GetAgentsByGroupContext(context.Background(), groupId)
+}
+
+func (api *Client) GetAgentsByGroupContext(ctx context.Context, groupId string) (*[]AgentInformation, error) {
+	response, err := GetAgentsByGroupRequest(ctx, api.httpclient, "agents/groups/"+groupId)
+	if err != nil {
+		return nil, err
+	}
+	return &response.Data.Items, nil
+}
+
+func GetAgentsByGroupRequest(ctx context.Context, client httpClient, path string) (*GetAllAgentsResponse, error) {
+	response := &GetAllAgentsResponse{}
+	err := GetJson(ctx, client, APIURL+path, response)
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}

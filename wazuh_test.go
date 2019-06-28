@@ -41,15 +41,15 @@ func ExampleNew() {
 	wazuh.New("https://wazuh.localhost:55000/")
 }
 
-func ExampleNewWithBasicAuth() {
+func ExampleNew_WithBasicAuth() {
 	wazuh.New("https://wazuh.localhost:55000/", wazuh.WithBasicAuth("username", "password"))
 }
 
-func ExampleNewWithClientCertificateFromFile() {
+func ExampleNew_WithClientCertificateFromFile() {
 	wazuh.New("https://wazuh.localhost:55000/", wazuh.WithClientCertificateFromFile("/path/to/certificate.cert", "/path/to/private.key"))
 }
 
-func ExampleNewWithClientCertificate() {
+func ExampleNew_WithClientCertificate() {
 	var cert, key []byte
 	wazuh.New("https://wazuh.localhost:55000/", wazuh.WithClientCertificate(cert, key))
 }

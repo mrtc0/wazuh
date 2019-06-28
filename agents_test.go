@@ -55,8 +55,11 @@ func TestGetAllAgents(t *testing.T) {
 
 	http.HandleFunc("/agents", func(w http.ResponseWriter, r *http.Request) { fmt.Fprint(w, string(b)) })
 
-	client := wazuh.New(endpoint)
-	client.SetBasicAuth("user", "pass")
+	client, err := wazuh.New(endpoint)
+
+	if err != nil {
+		t.Fatalf("want no err, but has error %#v", err.Error())
+	}
 	agents, err := client.GetAllAgents()
 
 	if err != nil {
@@ -77,7 +80,11 @@ func TestGetGroups(t *testing.T) {
 		fmt.Fprint(w, `{"error":0,"data":{"totalItems":1,"items":[{"count":4,"mergedSum":"345bce156ecdbf8cfaee550d003341a9","configSum":"ab73af41699f13fdd81903b5f23d8d00","name":"default"}]}}`)
 	})
 
-	wazuh := wazuh.New(endpoint)
+	wazuh, err := wazuh.New(endpoint)
+
+	if err != nil {
+		t.Fatalf("want no err, but has error %#v", err.Error())
+	}
 
 	groups, err := wazuh.GetGroups()
 

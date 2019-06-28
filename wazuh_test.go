@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http/httptest"
 	"sync"
+	"testing"
 
 	"github.com/mrtc0/wazuh"
 )
@@ -25,13 +26,21 @@ func ExampleNew() {
 	wazuh.New("https://wazuh.localhost:55000/")
 }
 
-func ExampleNew_withBasicAuth() {
-	wazuh := wazuh.New("https://wazuh.localhost:55000/")
-	// When using Basic Auth
-	wazuh.SetBasicAuth("username", "password")
+func TestCreateClientWithBasicAuth(t *testing.T) {
+	wazuh, err := wazuh.New("https://wazuh.localhost:55000/", wazuh.WithBasicAuth("username", "password"))
+	if err != nil {
+		t.Fatalf("want no err, but has error %#v", err)
+	}
+
+	if wazuh.Options.BasicUser != "username" {
+		t.Fatalf("expect username, but actual %#v", wazuh.Options.BasicUser)
+	}
+
+	if wazuh.Options.BasicPass != "password" {
+		t.Fatalf("expect password, but actual %#v", wazuh.Options.BasicPass)
+	}
 }
 
 func ExampleNew_withClientCertificate() {
-	// When using Client Certificate
-	wazuh.New("https://wazuh.localhost:55000/", wazuh.SetClientCertificate("/path/to/certificate.cert", "/path/to/private.key"))
+	wazuh.New("https://wazuh.localhost:55000/", wazuh.WithClientCertificateFromFile("/path/to/certificate.cert", "/path/to/private.key"))
 }

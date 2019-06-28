@@ -2,32 +2,32 @@ package wazuh
 
 import (
 	"context"
-	"strconv"
+	"path"
 
 	. "github.com/mrtc0/wazuh/define"
 )
 
-func GetRulesRequest(ctx context.Context, client httpClient, path string) (*GetRulesResponse, error) {
+func GetRulesRequest(ctx context.Context, client *Client, path string) (*GetRulesResponse, error) {
 	response := &GetRulesResponse{}
-	err := GetJson(ctx, client, APIURL+path, response)
+	err := GetJson(ctx, client, path, response)
 	if err != nil {
 		return nil, err
 	}
 	return response, nil
 }
 
-func GetRuleFilesRequest(ctx context.Context, client httpClient, path string) (*GetRuleFilesResponse, error) {
+func GetRuleFilesRequest(ctx context.Context, client *Client, path string) (*GetRuleFilesResponse, error) {
 	response := &GetRuleFilesResponse{}
-	err := GetJson(ctx, client, APIURL+path, response)
+	err := GetJson(ctx, client, path, response)
 	if err != nil {
 		return nil, err
 	}
 	return response, nil
 }
 
-func GetRequest(ctx context.Context, client httpClient, path string) (*Response, error) {
+func GetRequest(ctx context.Context, client *Client, path string) (*Response, error) {
 	response := &Response{}
-	err := GetJson(ctx, client, APIURL+path, response)
+	err := GetJson(ctx, client, path, response)
 	if err != nil {
 		return nil, err
 	}
@@ -35,12 +35,12 @@ func GetRequest(ctx context.Context, client httpClient, path string) (*Response,
 }
 
 // https://documentation.wazuh.com/current/user-manual/api/reference.html#get-all-rules
-func (api *Client) GetAllRules() (*[]Rules, error) {
-	return api.GetAllRulesContext(context.Background())
+func (client *Client) GetAllRules() (*[]Rules, error) {
+	return client.GetAllRulesContext(context.Background())
 }
 
-func (api *Client) GetAllRulesContext(ctx context.Context) (*[]Rules, error) {
-	response, err := GetRulesRequest(ctx, api.httpclient, "rules")
+func (client *Client) GetAllRulesContext(ctx context.Context) (*[]Rules, error) {
+	response, err := GetRulesRequest(ctx, client, "rules")
 	if err != nil {
 		return nil, err
 	}
@@ -48,12 +48,12 @@ func (api *Client) GetAllRulesContext(ctx context.Context) (*[]Rules, error) {
 }
 
 // https://documentation.wazuh.com/current/user-manual/api/reference.html#get-rules-by-id
-func (api *Client) GetRulesById(ruleId int) (*[]Rules, error) {
-	return api.GetRulesByIdContext(context.Background(), ruleId)
+func (client *Client) GetRulesById(ruleId string) (*[]Rules, error) {
+	return client.GetRulesByIdContext(context.Background(), ruleId)
 }
 
-func (api *Client) GetRulesByIdContext(ctx context.Context, ruleId int) (*[]Rules, error) {
-	response, err := GetRulesRequest(ctx, api.httpclient, "rules/"+strconv.Itoa(ruleId))
+func (client *Client) GetRulesByIdContext(ctx context.Context, ruleId string) (*[]Rules, error) {
+	response, err := GetRulesRequest(ctx, client, path.Join("rules", ruleId))
 	if err != nil {
 		return nil, err
 	}
@@ -61,12 +61,12 @@ func (api *Client) GetRulesByIdContext(ctx context.Context, ruleId int) (*[]Rule
 }
 
 // https://documentation.wazuh.com/current/user-manual/api/reference.html#get-files-of-rules
-func (api *Client) GetRuleFiles() (*[]RuleFiles, error) {
-	return api.GetRuleFilesContext(context.Background())
+func (client *Client) GetRuleFiles() (*[]RuleFiles, error) {
+	return client.GetRuleFilesContext(context.Background())
 }
 
-func (api *Client) GetRuleFilesContext(ctx context.Context) (*[]RuleFiles, error) {
-	response, err := GetRuleFilesRequest(ctx, api.httpclient, "rules/files")
+func (client *Client) GetRuleFilesContext(ctx context.Context) (*[]RuleFiles, error) {
+	response, err := GetRuleFilesRequest(ctx, client, "rules/files")
 	if err != nil {
 		return nil, err
 	}
@@ -74,12 +74,12 @@ func (api *Client) GetRuleFilesContext(ctx context.Context) (*[]RuleFiles, error
 }
 
 // https://documentation.wazuh.com/current/user-manual/api/reference.html#get-rule-gdpr-requirements
-func (api *Client) GetGdprRules() (*[]string, error) {
-	return api.GetGdprRulesContext(context.Background())
+func (client *Client) GetGdprRules() (*[]string, error) {
+	return client.GetGdprRulesContext(context.Background())
 }
 
-func (api *Client) GetGdprRulesContext(ctx context.Context) (*[]string, error) {
-	response, err := GetRequest(ctx, api.httpclient, "rules/gdpr")
+func (client *Client) GetGdprRulesContext(ctx context.Context) (*[]string, error) {
+	response, err := GetRequest(ctx, client, "rules/gdpr")
 	if err != nil {
 		return nil, err
 	}
@@ -87,12 +87,12 @@ func (api *Client) GetGdprRulesContext(ctx context.Context) (*[]string, error) {
 }
 
 // https://documentation.wazuh.com/current/user-manual/api/reference.html#get-rule-groups
-func (api *Client) GetRuleGroups() (*[]string, error) {
-	return api.GetRuleGroupsContext(context.Background())
+func (client *Client) GetRuleGroups() (*[]string, error) {
+	return client.GetRuleGroupsContext(context.Background())
 }
 
-func (api *Client) GetRuleGroupsContext(ctx context.Context) (*[]string, error) {
-	response, err := GetRequest(ctx, api.httpclient, "rules/groups")
+func (client *Client) GetRuleGroupsContext(ctx context.Context) (*[]string, error) {
+	response, err := GetRequest(ctx, client, "rules/groups")
 	if err != nil {
 		return nil, err
 	}
@@ -100,12 +100,12 @@ func (api *Client) GetRuleGroupsContext(ctx context.Context) (*[]string, error) 
 }
 
 // https://documentation.wazuh.com/current/user-manual/api/reference.html#get-rule-pci-requirements
-func (api *Client) GetRulePCI() (*[]string, error) {
-	return api.GetRulePCIContext(context.Background())
+func (client *Client) GetRulePCI() (*[]string, error) {
+	return client.GetRulePCIContext(context.Background())
 }
 
-func (api *Client) GetRulePCIContext(ctx context.Context) (*[]string, error) {
-	response, err := GetRequest(ctx, api.httpclient, "rules/pci")
+func (client *Client) GetRulePCIContext(ctx context.Context) (*[]string, error) {
+	response, err := GetRequest(ctx, client, "rules/pci")
 	if err != nil {
 		return nil, err
 	}

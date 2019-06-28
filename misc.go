@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	_path "path"
 )
 
 func ParseResponseBody(body io.ReadCloser, intf interface{}) error {
@@ -31,14 +32,17 @@ func DoGet(ctx context.Context, client httpClient, req *http.Request, intf inter
 	return ParseResponseBody(resp.Body, intf)
 }
 
-func GetJson(ctx context.Context, client httpClient, endpoint string, intf interface{}) error {
-	req, err := http.NewRequest("GET", endpoint, nil)
+func GetJson(ctx context.Context, client *Client, path string, intf interface{}) error {
+	endpoint := client.Options.Endpoint
+	endpoint.Path = _path.Join(endpoint.Path, path)
+
+	req, err := http.NewRequest("GET", endpoint.String(), nil)
 	if err != nil {
 		return err
 	}
 
-	if USERNAME != "" || PASSWORD != "" {
-		req.SetBasicAuth(USERNAME, PASSWORD)
+	if client.Options.BasicUser != "" || client.Options.BasicPass != "" {
+		req.SetBasicAuth(client.Options.BasicUser, client.Options.BasicPass)
 	}
 
 	/*
@@ -47,5 +51,5 @@ func GetJson(ctx context.Context, client httpClient, endpoint string, intf inter
 		req.URL.RawQuery = q.Encode()
 	*/
 
-	return DoGet(ctx, client, req, intf)
+	return DoGet(ctx, client.httpclient, req, intf)
 }

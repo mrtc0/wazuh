@@ -2,6 +2,7 @@ package wazuh
 
 import (
 	"context"
+	"path"
 )
 
 type AgentInformationData struct {
@@ -63,18 +64,18 @@ type AgentInformation struct {
 	MergedSum     string   `json:"mergedSum,omitempty"`
 }
 
-func GetAllAgentsRequest(ctx context.Context, client httpClient, path string) (*GetAllAgentsResponse, error) {
+func GetAllAgentsRequest(ctx context.Context, client *Client, path string) (*GetAllAgentsResponse, error) {
 	response := &GetAllAgentsResponse{}
-	err := GetJson(ctx, client, APIURL+path, response)
+	err := GetJson(ctx, client, path, response)
 	if err != nil {
 		return nil, err
 	}
 	return response, nil
 }
 
-func GetAnAgentRequest(ctx context.Context, client httpClient, path string) (*GetAnAgentResponse, error) {
+func GetAnAgentRequest(ctx context.Context, client *Client, path string) (*GetAnAgentResponse, error) {
 	response := &GetAnAgentResponse{}
-	err := GetJson(ctx, client, APIURL+path, response)
+	err := GetJson(ctx, client, path, response)
 	if err != nil {
 		return nil, err
 	}
@@ -82,12 +83,12 @@ func GetAnAgentRequest(ctx context.Context, client httpClient, path string) (*Ge
 }
 
 // https://documentation.wazuh.com/current/user-manual/api/reference.html#get-all-agents
-func (api *Client) GetAllAgents() (*[]AgentInformation, error) {
-	return api.GetAllAgentsContext(context.Background())
+func (client *Client) GetAllAgents() (*[]AgentInformation, error) {
+	return client.GetAllAgentsContext(context.Background())
 }
 
-func (api *Client) GetAllAgentsContext(ctx context.Context) (*[]AgentInformation, error) {
-	response, err := GetAllAgentsRequest(ctx, api.httpclient, "agents")
+func (client *Client) GetAllAgentsContext(ctx context.Context) (*[]AgentInformation, error) {
+	response, err := GetAllAgentsRequest(ctx, client, "agents")
 	if err != nil {
 		return nil, err
 	}
@@ -95,12 +96,12 @@ func (api *Client) GetAllAgentsContext(ctx context.Context) (*[]AgentInformation
 }
 
 // https://documentation.wazuh.com/current/user-manual/api/reference.html#get-an-agent
-func (api *Client) GetAnAgent(agentID string) (*AgentInformation, error) {
-	return api.GetAnAgentContext(context.Background(), agentID)
+func (client *Client) GetAnAgent(agentID string) (*AgentInformation, error) {
+	return client.GetAnAgentContext(context.Background(), agentID)
 }
 
-func (api *Client) GetAnAgentContext(ctx context.Context, agentID string) (*AgentInformation, error) {
-	response, err := GetAnAgentRequest(ctx, api.httpclient, "agents/"+agentID)
+func (client *Client) GetAnAgentContext(ctx context.Context, agentID string) (*AgentInformation, error) {
+	response, err := GetAnAgentRequest(ctx, client, path.Join("agents", agentID))
 	if err != nil {
 		return nil, err
 	}
@@ -108,42 +109,42 @@ func (api *Client) GetAnAgentContext(ctx context.Context, agentID string) (*Agen
 }
 
 // https://documentation.wazuh.com/current/user-manual/api/reference.html#get-groups
-func (api *Client) GetGroups() (*[]Group, error) {
-	return api.GetGroupsContext(context.Background())
+func (client *Client) GetGroups() (*[]Group, error) {
+	return client.GetGroupsContext(context.Background())
 }
 
-func (api *Client) GetGroupsContext(ctx context.Context) (*[]Group, error) {
-	response, err := GetGroupsRequest(ctx, api.httpclient, "agents/groups")
+func (client *Client) GetGroupsContext(ctx context.Context) (*[]Group, error) {
+	response, err := GetGroupsRequest(ctx, client, path.Join("agents", "groups"))
 	if err != nil {
 		return nil, err
 	}
 	return &response.Data.Items, nil
 }
 
-func GetGroupsRequest(ctx context.Context, client httpClient, path string) (*GetGroupsResponse, error) {
+func GetGroupsRequest(ctx context.Context, client *Client, path string) (*GetGroupsResponse, error) {
 	response := &GetGroupsResponse{}
-	err := GetJson(ctx, client, APIURL+path, response)
+	err := GetJson(ctx, client, path, response)
 	if err != nil {
 		return nil, err
 	}
 	return response, nil
 }
 
-func (api *Client) GetAgentsByGroup(groupId string) (*[]AgentInformation, error) {
-	return api.GetAgentsByGroupContext(context.Background(), groupId)
+func (client *Client) GetAgentsByGroup(groupId string) (*[]AgentInformation, error) {
+	return client.GetAgentsByGroupContext(context.Background(), groupId)
 }
 
-func (api *Client) GetAgentsByGroupContext(ctx context.Context, groupId string) (*[]AgentInformation, error) {
-	response, err := GetAgentsByGroupRequest(ctx, api.httpclient, "agents/groups/"+groupId)
+func (client *Client) GetAgentsByGroupContext(ctx context.Context, groupId string) (*[]AgentInformation, error) {
+	response, err := GetAgentsByGroupRequest(ctx, client, path.Join("agents", "groups", groupId))
 	if err != nil {
 		return nil, err
 	}
 	return &response.Data.Items, nil
 }
 
-func GetAgentsByGroupRequest(ctx context.Context, client httpClient, path string) (*GetAllAgentsResponse, error) {
+func GetAgentsByGroupRequest(ctx context.Context, client *Client, path string) (*GetAllAgentsResponse, error) {
 	response := &GetAllAgentsResponse{}
-	err := GetJson(ctx, client, APIURL+path, response)
+	err := GetJson(ctx, client, path, response)
 	if err != nil {
 		return nil, err
 	}

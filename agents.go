@@ -25,6 +25,16 @@ type GetGroupsResponse struct {
 	Data  GroupData `json:"data"`
 }
 
+type AgentRestartResponse struct {
+	Error int              `json:"error"`
+	Data  AgentRestartData `json:"data"`
+}
+
+type AgentRestartData struct {
+	Msg            string   `json:"msg"`
+	AffectedAgents []string `json:"affectedAgents"`
+}
+
 type GroupData struct {
 	TotalItems int     `json:"totalItems"`
 	Items      []Group `json:"items"`
@@ -145,6 +155,27 @@ func (client *Client) GetAgentsByGroupContext(ctx context.Context, groupId strin
 func GetAgentsByGroupRequest(ctx context.Context, client *Client, path string) (*GetAllAgentsResponse, error) {
 	response := &GetAllAgentsResponse{}
 	err := GetJson(ctx, client, path, response)
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (client *Client) RestartAgent(agentId string) (*AgentRestartData, error) {
+	return client.RestartAgentContext(context.Background(), agentId)
+}
+
+func (client *Client) RestartAgentContext(ctx context.Context, agentId string) (*AgentRestartData, error) {
+	response, err := RestartAgentRequest(ctx, client, path.Join("agents", agentId, "restart"))
+	if err != nil {
+		return nil, err
+	}
+	return &response.Data, nil
+}
+
+func RestartAgentRequest(ctx context.Context, client *Client, path string) (*AgentRestartResponse, error) {
+	response := &AgentRestartResponse{}
+	err := PutJson(ctx, client, path, []byte{}, response)
 	if err != nil {
 		return nil, err
 	}

@@ -122,3 +122,31 @@ func PutJson(ctx context.Context, client *Client, path string, json []byte, intf
 
 	return DoPut(ctx, client.httpclient, req, intf)
 }
+
+func DoDelete(ctx context.Context, client *Client, path string, intf interface{}) error {
+	endpoint := client.Options.Endpoint
+	endpoint.Path = _path.Join(endpoint.Path, path)
+
+	req, err := http.NewRequest("DELETE", endpoint.String(), nil)
+	if err != nil {
+		return err
+	}
+
+	if client.Options.BasicUser != "" || client.Options.BasicPass != "" {
+		req.SetBasicAuth(client.Options.BasicUser, client.Options.BasicPass)
+	}
+
+	c := client.httpclient
+	req = req.WithContext(ctx)
+	resp, err := c.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || 300 < resp.StatusCode {
+		return fmt.Errorf("http request error code:%d msg: %s", resp.StatusCode, http.StatusText(resp.StatusCode))
+	}
+
+	return ParseResponseBody(resp.Body, intf)
+}
